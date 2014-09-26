@@ -27,7 +27,7 @@ var typeColor = d3.scale.category10()
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient('left')
-    .ticks(10);
+    .ticks(20);
 
 var svg = d3.select('body').append('svg')
     .attr('id', 'chart')
