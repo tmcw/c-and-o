@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.shoutout {
+  display:block;
+  color:darkblue;
+  font-size:20px;
+  text-decoration:none;
+  padding:10px 10px 80px 10px;
+}
+
+.spot text {
+  display:none;
+  stroke-width:0;
+  fill:#000;
+  z-index:9999;
+}
+
+.spot:hover text {
+  display:block;
+}
+
+#chart {
+  margin:0 auto;
+}
+
+.axis, .place {
+  font: 10px sans-serif;
+}
+
+.place {
+  font-weight: bold;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.spot {
+  stroke:#fff;
+  stroke-width:2;
+}
+
+.spot:hover {
+  stroke-width:0;
+}
+
+#help {
+  position:fixed;
+  left:450px;
+  top:50px;
+  width:300px;
+}
+
+</style>
+<body>
+<a class='shoutout' href='http://bikewashington.org/canal/print.php'>ALL PRAISE TO BIKEWASHINGTON.ORG</a>
+<div id='help'></div>
+<script src='d3.v3.min.js'></script>
+<script src='site.js'></script>
