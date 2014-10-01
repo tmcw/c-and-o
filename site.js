@@ -1,4 +1,4 @@
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
+var margin = {top: 80, right: 20, bottom: 30, left: 40},
     width = 800 - margin.left - margin.right,
     height = 4000 - margin.top - margin.bottom;
 
@@ -29,11 +29,11 @@ var yAxis = d3.svg.axis()
     .orient('left')
     .ticks(10);
 
-var svg = d3.select('body').append('svg')
+var outside = d3.select('body').append('svg')
     .attr('id', 'chart')
     .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
-  .append('g')
+    .attr('height', height + margin.top + margin.bottom);
+var svg = outside.append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 d3.csv('campsites.csv', type('campsite'), function(error, campsites) {
@@ -42,11 +42,22 @@ d3.csv('campsites.csv', type('campsite'), function(error, campsites) {
       d3.csv('lodging.csv', type('lodging'), function(error, lodging) {
         d3.csv('access.csv', type('access'), function(error, access) {
           d3.csv('places.csv', type('places'), function(error, places) {
-            render(campsites
-              .concat(water)
-              .concat(food)
-              .concat(lodging)
-              .concat(access), places);
+            d3.csv('we-went.csv', type('places'), function(error, wewent) {
+              var wents = wewent.reduce(function(memo, place) {
+                memo[place.Name] = true;
+                return memo;
+              }, {});
+              var data = campsites
+                .concat(water)
+                .concat(food)
+                .concat(lodging)
+                .concat(access)
+                .map(function(place) {
+                  place.went = wents[place.Name];
+                  return place;
+                });
+              render(data, places);
+            });
           });
         });
       });
@@ -60,7 +71,7 @@ function render(data, places) {
       .attr('transform', 'translate(0,' + height + ')')
       .call(xAxis);
 
-svg.append('g')
+  svg.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(0,0)')
       .call(xAxisTop);
@@ -92,12 +103,29 @@ svg.append('g')
       });
 
    spots.append('circle')
-      .attr('r', 10)
+      .attr('r', function(d) { return d.went ? 15 : 8; })
+      .attr('opacity', function(d) { return d.went ? 1 : 0.5; })
       .attr('fill', function(d) { return typeColor(d.tag); });
+
+   var keys = outside.selectAll('.key')
+     .data(['went', 'didn\'t'])
+     .enter()
+     .append('g')
+     .attr('transform', function(d, i) { return 'translate(' + [i * 80 + 40, 20] + ')'; });
+
+   keys.append('circle')
+     .attr('r', function(d) { return d === 'went' ? 15 : 8; })
+     .attr('opacity', function(d) { return d === 'went' ? 1 : 0.5; })
+     .attr('fill', function(d) { return typeColor(d.tag); });
+
+   keys.append('text')
+     .text(String)
+     .attr('transform', 'translate(20, 2)');
 
   spots
     .append('g')
-    .attr('transform', 'translate(10,10)')
+    .attr('transform', 'rotate(90)translate(0,-30)')
+    .attr('text-anchor', 'middle')
     .append('text')
     .text(function(d) { return(d.Name); });
 
